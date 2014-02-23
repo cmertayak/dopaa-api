@@ -2,6 +2,7 @@ import urllib2
 import json
 from api.models import Product
 from django.db.utils import IntegrityError
+import time
 
 opener = urllib2.build_opener(urllib2.HTTPHandler);
 
@@ -25,13 +26,15 @@ def collect(id):
             currentPrice = obj['price']['regular']['value']
         elif 'original' in obj['price']:
             currentPrice = obj['price']['regular']['value']
+        elif 'everydayvalue' in obj['price']:
+            currentPrice = obj['price']['everydayvalue']['value']
         
         product = Product(store_id = obj['id'],
                           title = obj['summary']['name'],
                           desc = obj['summary']['description'],
-                          sizes = obj['SizeMap'],
-                          colors = obj['colorMap'],
-                          images = obj['image'],
+                          sizes = json.dumps(obj['SizeMap']),
+                          colors = json.dumps(obj['colorMap']),
+                          images = json.dumps(obj['image']),
                           price = currentPrice,
                           instore_eligible = obj['availability']['instoreeligible'] != 'false'
                           )
@@ -45,11 +48,12 @@ def collect(id):
     
     
 def init_some_prods():
-    ids = ["97171", "97172", "99521", "101262", "101343", "107967", "107968", "110417", "134729", "134871", "153449", "153450", "153453", "156331", "156889", "159815", "166725", "166726", "178922", "180784", "181718", "192192", "198750", "199234", "200483", "200485", "200490", "200491", "207352", "207353", "216953", "218287", "223193", "224139", "224140", "224151", "224152", "224153", "224156", "226930", "227262", "229581", "235665", "241631", "245982", "246498", "246545"]
+    ids = ["1412803", "1413432", "1413434", "1413831", "1413843", "1414752", "1414764", "1414769", "1414775", "1414787", "1414813", "1414834", "1414848", "1414856", "1414858", "1414863", "1414873", "1414878", "1414893", "1414905", "1415116", "1415127", "1415137", "1415145", "1415269", "1415275", "1415277", "1415336"]
     
     for id in ids:
         try:
             collect(int(id))
+            time.sleep(0.5) 
         except IntegrityError:
             print 'IntegrityError passing %s' % id
 
@@ -63,5 +67,5 @@ def correct_fields():
 def run():
     #print "done"
     #return
-    correct_fields()
+    init_some_prods()
 
