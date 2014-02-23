@@ -14,13 +14,18 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
         
 class ProductSerializer(serializers.ModelSerializer):
-    sizes = serializers.SerializerMethodField('to_json')
-    colors = serializers.SerializerMethodField('to_json')
-    images = serializers.SerializerMethodField('to_json')
+    sizes = serializers.SerializerMethodField('sizes_to_json')
+    colors = serializers.SerializerMethodField('colors_to_json')
+    images = serializers.SerializerMethodField('images_to_json')
 
     class Meta:
         model = Product
 
-    def to_json(self, obj):
-        print obj.sizes
+    def sizes_to_json(self, obj):
         return json.loads(obj.sizes)
+    
+    def colors_to_json(self, obj):
+        return json.loads(obj.colors)
+    
+    def images_to_json(self, obj):
+        return json.loads(obj.images)

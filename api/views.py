@@ -6,6 +6,9 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from api.models import Product
 from api.serializers import UserSerializer, GroupSerializer, ProductSerializer
+from django.shortcuts import get_object_or_404 
+from rest_framework.response import Response
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -27,3 +30,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    
+    def retrieve(self, request, pk=None):
+        queryset = Product.objects.all()
+        product = get_object_or_404(queryset, pk=pk)
+        serializer = ProductSerializer(product)
+        return Response({'results':serializer.data}) 
